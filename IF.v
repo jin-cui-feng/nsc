@@ -1,7 +1,7 @@
 `include "lib/defines.vh"
 module IF(
-    input wire clk,
-    input wire rst,
+    input wire clk,           //时钟信号
+    input wire rst,           //复位信号
     input wire [`StallBus-1:0] stall,
 
     // input wire flush,
@@ -51,9 +51,9 @@ module IF(
                    : pc_reg + 32'h4;
 
     
-    assign inst_sram_en = ce_reg;
+    assign inst_sram_en = ce_reg; 
     assign inst_sram_wen = 4'b0;
-    assign inst_sram_addr = pc_reg;
+    assign inst_sram_addr =pc_reg;
     assign inst_sram_wdata = 32'b0;
     assign if_to_id_bus = {
         ce_reg,
