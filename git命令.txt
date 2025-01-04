@@ -1,0 +1,7 @@
+git init
+git remote add origin https://github.com/jin-cui-feng/nsc.git
+git fetch origin
+git checkout -b test_feng origin/test_feng
+git add .
+git commit -m "上传项目文件"
+git push origin test_feng
