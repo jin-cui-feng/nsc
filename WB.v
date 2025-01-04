@@ -46,12 +46,12 @@ module WB(
         rf_wdata
     } = mem_to_wb_bus_r;
 
+    // assign wb_to_rf_bus = mem_to_wb_bus_r[`WB_TO_RF_WD-1:0];
     assign wb_to_rf_bus = {
         rf_we,
         rf_waddr,
         rf_wdata
     };
-    
     assign wb_to_id_bus = {
         rf_we,
         rf_waddr,
@@ -63,5 +63,5 @@ module WB(
     assign debug_wb_rf_wnum = rf_waddr;
     assign debug_wb_rf_wdata = rf_wdata;
 
-    
+
 endmodule

@@ -22,7 +22,7 @@ module alu(
     assign {op_add, op_sub, op_slt, op_sltu,
             op_and, op_nor, op_or, op_xor,
             op_sll, op_srl, op_sra, op_lui} = alu_control;
-    
+
     wire [31:0] add_sub_result;
     wire [31:0] slt_result;
     wire [31:0] sltu_result;
@@ -57,7 +57,7 @@ module alu(
     assign slt_result[31:1] = 31'b0;
     assign slt_result[0] = (alu_src1[31] & ~alu_src2[31]) 
                          | (~(alu_src1[31]^alu_src2[31]) & adder_result[31]);
-    
+
     assign sltu_result[31:1] = 31'b0;
     assign sltu_result[0] = ~adder_cout;
 
@@ -76,5 +76,5 @@ module alu(
                       | ({32{op_srl         }} & srl_result)
                       | ({32{op_sra         }} & sra_result)
                       | ({32{op_lui         }} & lui_result);
-                      
+
 endmodule
