@@ -6,8 +6,8 @@ module EX(
     input wire [`StallBus-1:0] stall,
 
     input wire [`ID_TO_EX_WD-1:0] id_to_ex_bus,
-
     output wire [`EX_TO_MEM_WD-1:0] ex_to_mem_bus,
+    //添加的ex回ID的总线
     output wire [37:0] ex_to_id_bus,
     
     output wire data_sram_en,
@@ -15,12 +15,13 @@ module EX(
     output wire [31:0] data_sram_addr,
     output wire [31:0] data_sram_wdata,
     output wire inst_is_load,  //判断是否是读取指令
+
     output wire stallreq_for_ex,
-    ///
+    //
     output wire [65:0]ex_to_mem_1,
     output wire [65:0]ex_to_id_2,
-    output wire ready_ex_to_id
-    ///
+    output wire ready_ex_to_id //定义inst_stall需要
+    //
 );
 
     reg [`ID_TO_EX_WD-1:0] id_to_ex_bus_r;
@@ -52,7 +53,7 @@ module EX(
     wire sel_rf_res;
     wire [31:0] rf_rdata1, rf_rdata2;
     reg is_in_delayslot;
-    //
+    //lo、hi寄存器
     wire [1:0] lo_hi_r;
     wire [1:0] lo_hi_w;
     wire w_hi_we;
@@ -79,8 +80,8 @@ module EX(
         rf_rdata2,        // 31:0   
         //
         lo_hi_r,                        
-        lo_hi_w,                        //hi、lo写使能
-        lo_o,                           //loֵ
+        lo_hi_w,                        //hi、lo读、写使能
+        lo_o,                           //loֵ、high的数据
         hi_o, 
         //
         data_ram_read
@@ -152,14 +153,15 @@ module EX(
        
     };
  
-
+  // 新添加ex到id的数据总线的信息
     assign ex_to_id_bus = {        
        rf_we,//37
        rf_waddr,//36:32
        ex_result//31:0
     };
-
-    assign inst_is_load = (inst[31:26] == 6'b10_0011) ? 1'b1 :1'b0;//判断是否是读取指令
+   
+   //判断是否是读取指令
+    assign inst_is_load = (inst[31:26] == 6'b10_0011) ? 1'b1 :1'b0;
   
    
    //
@@ -178,9 +180,8 @@ module EX(
     assign w_hi_we1 = mult | multu ;
     assign w_lo_we1 = mult | multu ;
     //
-    wire [31:0] mul_data1;
-    wire [31:0] mul_data2;
-
+    //wire [31:0] mul_data1;
+   // wire [31:0] mul_data2;
    // assign mul_data1 = w_hi_we1 ? alu_src1 : 32'b0;
    // assign mul_data2 = w_hi_we1 ? alu_src2 : 32'b0;
     assign mul_signed=mult;
@@ -192,12 +193,10 @@ module EX(
     	.clk        (clk            ),
         .resetn     (~rst           ),
         .mul_signed (mul_signed     ),
-        .ina        (rf_rdata1      ), // 乘法源操作数1 ?
-        .inb        (rf_rdata2      ), // 乘法源操作数2 ?
-        //.ina        (mul_data1      ), // 乘法源操作数1 ?
-        //.inb        (mul_data2      ), // 乘法源操作数2 ?
+        .ina        (rf_rdata1      ), // 乘法源操作数1 
+        .inb        (rf_rdata2      ), // 乘法源操作数2 
         .result     (mul_result     ) // 乘法结果 64bit
-       //?可能有缺的
+
     );
 
 

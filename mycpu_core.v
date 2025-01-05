@@ -127,7 +127,7 @@ module mycpu_core(
         .rst               (rst               ),
         .stall             (stall             ),
         .mem_to_wb_bus     (mem_to_wb_bus     ),
-
+        //添加回ID段的数据总线
         .wb_to_id_bus      (wb_to_id_bus      ),
 
         .wb_to_rf_bus      (wb_to_rf_bus      ),

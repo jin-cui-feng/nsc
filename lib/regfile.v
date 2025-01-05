@@ -80,7 +80,7 @@ module regfile(
         wb1_rf_waddr,   // 36:32
         wb1_rf_wdata    // 31:0
     } = wb_to_id_bus;
-    //
+    //高低寄存器
     wire hi_ex_we;
     wire lo_ex_we;
     wire [31:0] hi_ex;
@@ -119,23 +119,12 @@ module regfile(
 
     // read out 1
  //   
-    assign read1 = (raddr1 == 5'b0) ? 32'b0 : 
+    assign rdata1 = (raddr1 == 5'b0) ? 32'b0 : 
     ((raddr1 == ex_rf_waddr)&& ex_rf_we) ? ex_result : 
     ((raddr1 == mem_rf_waddr)&& mem_rf_we) ? mem_rf_wdata : 
     ((raddr1 == wb1_rf_waddr)&& wb1_rf_we) ? wb1_rf_wdata :
     reg_array[raddr1];
     
-    
- wire [31:0] read2;
-    
-    assign read2 = inst[7:6] == 2'b11 ?  ({read1[27:0],4'b0}):
-                  inst[7:6] == 2'b00 ?  ({read1[30:0],1'b0}):
-                  inst[7:6] == 2'b01 ?  ({read1[29:0],2'b0}):
-                  inst[7:6] == 2'b10 ?  ({read1[28:0],3'b0}):
-                  32'b0;
-    //assign rdata1 = inst_lsa ? read2 : read1;
-    assign rdata1=read1;
-//
 
     // read out2
     assign rdata2 = (raddr2 == 5'b0) ? 32'b0 : 

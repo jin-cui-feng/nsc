@@ -8,7 +8,7 @@ module WB(
     input wire [`MEM_TO_WB_WD-1:0] mem_to_wb_bus,
 
     output wire [`WB_TO_RF_WD-1:0] wb_to_rf_bus,
-
+    //添加的wb回ID段的数据总线
     output wire [37:0] wb_to_id_bus,
 
     output wire [31:0] debug_wb_pc,
@@ -92,7 +92,7 @@ module WB(
         rf_waddr,
         rf_wdata
     };
-    
+    //添加回ID段的数据总线
     assign wb_to_id_bus = {
         rf_we,
         rf_waddr,

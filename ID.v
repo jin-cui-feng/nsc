@@ -3,14 +3,15 @@ module ID(
     input wire clk,
     input wire rst,
     // input wire flush,
-    input wire [`StallBus-1:0] stall,
-    output wire stallreq_for_id,////
-    output wire stallreq,
+    input wire [`StallBus-1:0] stall,// 流水线暂停信号
+    output wire stallreq_for_id,//对id的停止请求
+    output wire stallreq,// 流水线暂停请求信号
     
+    //添加的 数据总线
     input wire [37:0] ex_to_id_bus,
     input wire [37:0] mem_to_id_bus,
     input wire [37:0] wb_to_id_bus,
-    //
+    //高低位寄存器相关指令
     input wire [65:0] ex_to_id_2,
     input wire [65:0] mem_to_id_2,
     input wire [65:0] wb_to_id_2,
@@ -28,7 +29,7 @@ module ID(
     output wire [`BR_WD-1:0] br_bus,
     
     //
-    input wire [65:0] wb_to_id_wf,
+    input wire [65:0] wb_to_id_wf,// WB 写回 id 的高低位信号(寄存器)
     input wire ready_ex_to_id
     //
 );
@@ -73,6 +74,7 @@ module ID(
     assign inst_stall1 = inst_stall;
     assign inst_stall_en1 = inst_stall_en ;
     
+
     assign inst = inst_stall_en1 ? inst_stall1  :inst_sram_rdata;
    // assign inst = inst_sram_rdata;
     assign {
@@ -279,29 +281,36 @@ module ID(
 
 
     // rs to reg1
+     //如果为 1，表示 ALU 的第一个操作数来自 rs（源寄存器 1）
     assign sel_alu_src1[0] = inst_ori | inst_addiu | inst_subu | inst_addu | inst_or | inst_lw | inst_sw | inst_xor | inst_sltu | inst_slt
                                 | inst_slti | inst_sltiu | inst_add | inst_addi | inst_sub | inst_and | inst_andi | inst_nor | inst_xori
                                 | inst_sllv | inst_srav | inst_srlv | inst_mthi | inst_mtlo | inst_div | inst_divu | inst_mult | inst_multu
                                 | inst_lb | inst_lbu | inst_lh | inst_lhu | inst_sb | inst_sh | inst_lsa;
 
     // pc to reg1
+    //如果为 1，表示 ALU 的第一个操作数来自 rs（源寄存器 1）
     assign sel_alu_src1[1] = inst_jal | inst_bgezal |inst_bltzal | inst_jalr;
 
     // sa_zero_extend to reg1
+    //如果为 1，表示 ALU 的第一个操作数来自 sa（移位量）的零扩展值
     assign sel_alu_src1[2] = inst_sll | inst_sra | inst_srl;
 
     
     // rt to reg2
+    //如果为 1，表示 ALU 的第二个操作数来自 rt（源寄存器 2）
     assign sel_alu_src2[0] = inst_subu | inst_addu | inst_sll | inst_or | inst_xor | inst_sltu | inst_slt | inst_add | inst_sub | inst_and |
                               inst_nor | inst_sllv | inst_sra | inst_srav | inst_srl | inst_srlv | inst_div | inst_divu | inst_mult | inst_multu | inst_lsa;
     
     // imm_sign_extend to reg2
+    //如果为 1，表示 ALU 的第二个操作数来自立即数的符号扩展值
     assign sel_alu_src2[1] = inst_lui | inst_addiu | inst_lw | inst_sw | inst_slti | inst_sltiu | inst_addi | inst_lb | inst_lbu | inst_lh | inst_lhu | inst_sb | inst_sh;
 
     // 32'b8 to reg2
+    //如果为 1，表示 ALU 的第二个操作数是常数 32'b8
     assign sel_alu_src2[2] = inst_jal | inst_bgezal | inst_bltzal | inst_jalr;
 
     // imm_zero_extend to reg2
+    //如果为 1，表示 ALU 的第二个操作数来自立即数的零扩展值
     assign sel_alu_src2[3] = inst_ori | inst_andi | inst_xori;
    
     //  低位寄存器到目标 
@@ -330,7 +339,7 @@ module ID(
                      op_sll, op_srl, op_sra, op_lui};
 
 
-
+   //生成数据存储器和寄存器文件的控制信号
     // load and store enable
    assign data_ram_en = inst_lw | inst_sw | inst_lb | inst_lbu | inst_lh | inst_lhu | inst_sb | inst_sh;
 
@@ -362,7 +371,7 @@ module ID(
     // store in [31]
     assign sel_rf_dst[2] = inst_jal | inst_bgezal | inst_bltzal ;
     
-    //
+     //low和high的写入信号
     // store in lo
     assign lo_hi_w[0] = inst_mtlo;
     // store in hi
